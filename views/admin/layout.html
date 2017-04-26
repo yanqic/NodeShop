@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/public/css/ad_layout.css" type="text/css" />
+    <script src="/public/js/jquery-1.12.4.min.js"></script>
+    <script src="/public/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myCollapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Brand</a>
+        </div>
+        <!--其他导航-->
+
+        <!--<div id='myCollapse' class="navbar-collapse collapse">-->
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a type="button" data-toggle="dropdown" style="cursor: pointer;">欢迎您，{{adminInfo.uname}} <span class="caret"></span></a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="../index.html"><span class="glyphicon glyphicon-screenshot"></span> 前台首页</a></li>
+                        <li><a href=""><span class="glyphicon glyphicon-user"></span> 个人主页</a></li>
+                        <li><a href=""><span class="glyphicon glyphicon-cog"></span> 个人设置</a></li>
+                        <li><a href=""><span class="glyphicon glyphicon-credit-card"></span> 账户中心</a></li>
+                        <li><a href=""><span class="glyphicon glyphicon-heart"></span> 我的收藏</a></li>
+                    </ul>
+                </li>
+                <li><a href="/api/admin/logout"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">Go!</button>
+                    </span>
+                </div>
+            </form>
+        <!--</div>-->
+    </div>
+</nav>
+<div class="container-fluid contain">
+    <div class="row board">
+        <div class="nav-left">
+            <ul class="top-nav">
+                <li class="top-list"><a href="/admin"><i class="glyphicon glyphicon-home"></i>后台首页</a></li>
+                <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-briefcase"></i>商品管理</a>
+                    <ul class="sub-nav">
+                        <li><a href="/admin/add_product">添加产品</a></li>
+                        <li><a href="/admin/product">产品总览</a></li>
+                        <li><a href="">类目管理</a></li>
+                    </ul>
+                </li>
+                <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-stats"></i>交易管理</a>
+                    <ul class="sub-nav">
+                        <li><a href="">历史订单</a></li>
+                        <li><a href="">待处理</a></li>
+                    </ul>
+                </li>
+                <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-send"></i>内容管理</a>
+                    <ul class="sub-nav">
+                        <li><a href="/admin/article">文章总览</a></li>
+                        <li><a href="/admin/edit">发布文章</a></li>
+                        <li><a href="">标签管理</a></li>
+                    </ul>
+                </li>
+                <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-user"></i>会员管理</a>
+                    <ul class="sub-nav">
+                        <li><a href="/admin/user">用户总览</a></li>
+                        <li><a href="/admin/add_user">管理员</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="content-right">
+            {%block main%}{%endblock%}
+        </div>
+    </div>
+</div>
+<script>
+    $('.top-a').on('click',function(ev){
+      $(this).next('.sub-nav').slideToggle(300);
+      ev.preventDefault();
+    })
+</script>
+</body>
+</html>

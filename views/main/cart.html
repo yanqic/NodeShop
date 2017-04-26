@@ -1,0 +1,162 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+<style>
+    .panel-heading h4{
+        margin:5px 0;
+    }
+    table td{
+        vertical-align: middle !important;
+    }
+    .table img{
+        width:80px;
+        height:80px;
+        margin-right: 10px;
+    }
+    .table td h5{
+        display: inline-block;
+    }
+    .table .num-td span{
+        cursor: pointer;
+    }
+    .table .num-td .num{
+        padding:0 10px;
+        font-style: normal;
+    }
+    .table .sum-td div{
+        height: 54px;
+        line-height:34px;
+        display: inline-block;
+        padding:10px 0;
+    }
+    .sum-td div h5{
+        margin: 0;
+        padding:0 8px;
+    }
+    .sum-td h5 span{
+        color: #e67e22;
+        font-weight:700;
+    }
+    .pull-right button{
+        background: #e67e22;
+        color: #fff;
+    }
+    td input[type=checkbox]{
+        width: 24px;
+        height: 24px;
+    }
+    .c_title{
+        display: inline-block;
+        max-width: 260px;
+    }
+    input.checkall{
+        vertical-align: middle;
+        margin: 0;
+    }
+    .deleteall{
+        cursor: pointer;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>购物清单</h4></div>
+    <table class="table">
+        <tr>
+            <th colspan="2">商品信息</th>
+            <th>款式</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>小计</th>
+            <th>操作</th>
+        </tr>
+        <form action="/order" method="get">
+        {%for cart in carts%}
+        <tr data-id="{{cart._id.toString()}}">
+            <td><input type="checkbox" class="check" name="ids" value="{{cart._id.toString()}}"></td>
+            <td><img src="{{cart.cp_id.p_pic[0]}}"><p class="c_title">{{cart.cp_id.p_title}}</p>
+            </td>
+            <td><p><span>颜色</span><span>{{cart.color}}</span></p><p><span>尺码:</span><span>{{cart.size}}</span></p></td>
+            <td>￥<span class="price">{{cart.cp_id.price}}</span></td>
+            <td class="num-td"><span class="glyphicon glyphicon-minus-sign"></span><em class="num">{{cart.num}}</em><span class="glyphicon glyphicon-plus-sign"></span></td>
+            <td>￥<span class="price-td">{{cart.cp_id.price*cart.num}}</span></td>
+            <td><button class="close">&times;</button></td>
+        </tr>{%endfor%}
+        <tr>
+            <td colspan="7" class="sum-td"><div><label ><input type="checkbox" class="checkall">全选</label> | <span class="deleteall">删除选中商品</span></div><div class="pull-right"><h5>已选 <span class="checknum">0</span> 件产品</h5>|<h5>应付总额: <span id="sum">0</span></h5> <button type="submit" class="btn order">现在结算</button></div></td>
+        </form>
+        </tr>
+    </table>
+</div>
+<script>
+    $('.num-td span').on('click',function () {
+      var btIndex = $(this).index();
+      var num = $(this).siblings('.num');
+      var val =parseInt($(num).html());
+      if(btIndex==0){
+        val = val-1;
+        if(val<=0){
+            return;
+        }
+      }else{
+        val = val+1; //+不具有隐私类型转换
+      }
+      $(num).html(val);
+      //改总价
+        $(this).closest('tr').find('.price-td').text($(this).closest('tr').find('.price').text()*val);
+        var sum =0;
+        $('.check:checked').each(function () {
+            var price =$(this).closest('tr').find('.price-td').text();
+            sum+= parseInt(price);
+        })
+        $('#sum').text(sum);
+        var id=$(this).closest('tr').attr('data-id');
+        $.post('/api/upcart',{id:id,num:val},function (data) {
+            console.log(data.mess);
+        })
+    })
+    //全选，反选
+    $('.checkall').on('click',function () {
+        var check = $(this).prop('checked');
+        $('.check').prop('checked',check);
+        $('.checknum').html($('.check:checked').length);
+        var sum =0;
+        $('.check:checked').each(function () {
+            var price =$(this).closest('tr').find('.price-td').text();
+            sum+= parseInt(price);
+        })
+        $('#sum').text(sum);
+    })
+    $('.check').on('click',function () {
+        $('.checknum').html($('.check:checked').length);
+        var sum =0;
+        $('.check:checked').each(function () {
+            var price =$(this).closest('tr').find('.price-td').text();
+            sum+= parseInt(price);
+        })
+        $('#sum').text(sum);
+    })
+    //改数量
+    $('.num').on('change',function () {
+        var sum = $(this).closest('tr').find('.price').text()*$(this).text();
+        $('.price-td').text(sum);
+    })
+    //删除
+    $('.close').on('click',function () {
+      var c_id = $(this).closest('tr').attr('data-id');
+       $.post('/api/delcart',{id:c_id},function (data) {
+            console.log(data.mess);
+       })
+        $(this).closest('tr').remove();
+        var sum =0;
+        $('.check:checked').each(function () {
+            var price =$(this).closest('tr').find('.price-td').text();
+            sum+= parseInt(price);
+        })
+        $('#sum').text(sum);
+    })
+$('.deleteall').on('click',function () {
+    $('.check:checked').each(function () {
+      $(this).closest('tr').find('.close').trigger('click');
+    })
+})
+</script>
+{%endblock%}

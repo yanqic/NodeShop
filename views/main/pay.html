@@ -1,0 +1,90 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+<style>
+    .paymess,.payinfo{
+        text-align: center;
+    }
+    .board{
+        border-radius: 6px;
+        border:1px solid #E6E6E6;
+        padding:30px 10px;
+    }
+    .choosetit{
+        line-height: 34px;
+        font-size:18px;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+    .choosepay{
+        list-style: none;
+        padding:0;
+        margin:0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .choosepay li{
+        float: left;
+        border:1px solid #E6E6E6;
+        border-radius: 6px;
+        padding:4px 6px;
+        margin-right: 10px;
+        background: #F9F9F9;
+    }
+    .ylpay{
+        border-top: 1px dashed #E6E6E6;
+        margin-top: 10px;
+        padding: 10px 0;
+    }
+    .ylpay ul{
+        list-style: none;
+        padding:0;
+        margin:0;
+        text-align: center;
+    }
+    .ylpay li{
+        display: inline-block;
+        background: #F9F9F9;
+        border:1px solid #E6E6E6;
+        border-radius: 6px;
+        padding:4px 6px;
+        margin-right: 12px;
+    }
+    .panel-footer{
+        text-align: right;
+    }
+    .checked{
+        background: #ffffff !important;
+        border-color:#6A8FE5 !important;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">支付订单</div>
+    <div class="panel-body">
+       <h3 class="paymess">提交订单成功</h3>
+        <p class="payinfo">请在 <span>24 小时</span>内完成支付，超时订单将自动取消。我们将在您完成支付后的 72 小时内发货</p>
+        <div class="board">
+            <span class="choosetit">请选择付款方式</span>
+            <ul class="choosepay">
+                <li><img src="/public/images/weixinpay.png"></li>
+                <li><img src="/public/images/alipay.png"></li>
+                <li><img src="/public/images/ylpay.png"></li>
+            </ul>
+            <div class="ylpay">
+                <ul>
+                    <li><img src="/public/images/pay-abc.png" alt=""></li>
+                    <li><img src="/public/images/pay-boc.png" alt=""></li>
+                    <li><img src="/public/images/pay-ccb.png" alt=""></li>
+                    <li><img src="/public/images/pay-icbc.png" alt=""></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer"><button class="btn btn-info">现在支付</button></div>
+</div>
+<script>
+    $('.choosepay li').on('click',function () {
+        $(this).addClass('checked');
+    })
+</script>
+{%endblock%}

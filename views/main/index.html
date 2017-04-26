@@ -1,0 +1,47 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+<style>
+    .a_pic{
+        width:120px;
+        height:120px;
+        float:left;
+        margin-right: 10px;
+    }
+    .about span{
+        padding-right: 10px;
+    }
+    .about i{
+        margin-right:5px;
+    }
+</style>
+    {%for article in articles%}
+    <div class="listBox">
+        <h2>{{article.a_title}}</h2>
+        <img src="{{article.a_pic}}" class="a_pic">
+        <p class="abs">{{article.a_abs.substr(0,60)+'...'}}</p>
+        <div class="function"><a href="/article?a_id={{article._id.toString()}}">阅读全文</a></div>
+        <p class="about"><span class="author"><i class="glyphicon glyphicon-user"></i>{{article.author.uname}}</span><span class="date"><i class="glyphicon glyphicon-time"></i>{{article.addTime|date('Y年m月d日 H:i:s', -8*60)}}</span><span class="look"><i class="glyphicon glyphicon-eye-open"></i>{{article.views}}</span></p>
+    </div>
+    {%endfor%}
+
+<ul class="pager">
+    {%if page==1&&page==pages%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==1%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next"><a href="/?tag={{tag}}&page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==pages%}
+    <li class="previous"><a href="/?tag={{tag}}&page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%else%}
+    <li class="previous"><a href="/?tag={{tag}}&page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next"><a href="/?tag={{tag}}&page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%endif%}
+</ul>
+{%endblock%}

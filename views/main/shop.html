@@ -1,0 +1,86 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+<style>
+    .thumbnail .btn{
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        color: #a1a1a1;
+    }
+    .thumbnail p{
+        margin-bottom:5px;
+    }
+    .thumbnail .price{
+        color:#e67e22;
+        font-size:20px;
+        display: inline-block;
+        position:relative;
+        top:4px;
+    }
+    .thumbnail .addcart{
+        float: right;
+        background-color:#e67e22;
+        color:#fff;
+    }
+    .addcart:hover{
+        background: #f0ad4e;
+    }
+    .list-group a{
+        padding-left: 30px;
+        color: #666;
+        text-decoration: none;
+    }
+    .list-group a:hover{
+        color:#e67e22;
+    }
+</style>
+<ul class="list-group">
+    <li class="list-group-item"><span>分类:</span>{%for cate in categories%}<a href="/shop?cate={{cate._id.toString()}}">{{cate.name}}</a>{%endfor%}</li>
+    <li class="list-group-item"><span>排序:</span><a href="/shop">默认</a><a href="/shop?sort=price">价格<i class="glyphicon glyphicon-arrow-up"></i></a><a href="/shop?sort=addTime">上架时间<i class="glyphicon glyphicon-arrow-down"></i></a></li>
+</ul>
+<div class="order">
+    <div class="row">
+        {%for product in products%}
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <a href="/pdetail?p_id={{product._id.toString()}}"><img src="{{product.p_pic[0]}}"/></a>
+                <div class="caption">
+                    <h4>{{product.p_title.substr(0,20)+'...'}}</h4>
+                    <p><span class="price">￥{{product.price}}</span> <a href="/pdetail?p_id={{product._id.toString()}}" class="btn addcart">查看详情</a></p>
+                </div>
+            </div>
+        </div>
+        {%endfor%}
+
+
+
+    </div>
+</div>
+
+<ul class="pager">
+    {%if page==1&&page==pages%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==1%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next"><a href="/shop?cate={{cate}}&page={{page+1}}&sort={{sort}}">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==pages%}
+    <li class="previous"><a href="/shop?cate={{cate}}&page={{page-1}}&sort={{sort}}"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%else%}
+    <li class="previous"><a href="/shop?cate={{cate}}&page={{page-1}}&sort={{sort}}"><span>&larr;</span> 上一页</a></li>
+    <li><strong>{{page}} / {{pages}}</strong></li>
+    <li class="next"><a href="/shop?cate={{cate}}&page={{page+1}}&sort={{sort}}">下一页 <span>&rarr;</span></a></li>
+    {%endif%}
+</ul>
+{%endblock%}}

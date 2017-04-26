@@ -1,0 +1,208 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<style>
+    .header{
+        color:#454545;
+        border-left:8px solid #4A5064;
+        background: #fff;
+        height: 50px;
+        line-height: 50px;
+        padding-left:24px;
+        margin:0 20px 20px 20px;
+    }
+    .header h3{
+        margin:0;
+        line-height:50px;
+    }
+    .panel{
+        margin:20px;
+    }
+    table label{
+        text-align: right;
+        display: inline-block;
+        height:100%;
+        width:100%;
+        line-height:1em;
+    }
+    table input[type='checkbox']{
+        width:20px;
+        height:20px;
+        margin:0 5px 0 0;
+        vertical-align: top;
+    }
+    table span{
+        display: inline-block;
+        vertical-align: top;
+        font-size: 20px;
+        line-height: 20px;
+        padding-right: 30px;
+    }
+    .imgbox{
+       width:100px;
+        height:100px;
+        background-color: #f6f6f6;
+        text-align: center;
+        display: inline-block;
+        margin-right: 20px;
+        vertical-align: top;
+    }
+    .imgbox a{
+        color: #d7d7d7;
+        cursor: pointer;
+        font-size: 42px;
+        position: relative;
+        top: 24px;
+    }
+    td button{
+        vertical-align: top;
+    }
+    td .well{
+        margin:0;
+    }
+    .addcates{
+        padding-top: 10px;
+    }
+    .addcates .addcate{
+        width:294px;
+        display: inline-block;
+    }
+    .addcates button{
+        vertical-align: top;
+        margin-left: 10px;
+    }
+    .addcates .mess{
+        margin: 4px 0 0 0;
+        color: #f83232;
+    }
+    .uploadmess{
+        padding-left: 20px;color: #f83232;
+    }
+</style>
+<div class="header">
+    <h3>商品管理</h3>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+       <table class="table table-bordered">
+           <tr><th><label >商品标题:</label></th><td colspan="2"><input type="text" class="form-control" name="p_title"></td><td>
+               <label >商品编码:</label></td><td><input type="text" name="p_id" class="form-control" placeholder="请填写6位数编码"></td></tr>
+           <tr><th rowspan="3"><label >商品属性:</label></th>
+               <td><label>材质:</label></td><td><input type="text" class="form-control" name="p_material"></td>
+               <td><label>风格:</label></td><td><select name="p_tag" class="form-control">
+                   {%for tag in tags%}
+                   <option value="{{tag._id.toString()}}">{{tag.name}}</option> {%endfor%}</select></td></tr>
+           <tr><td><label>尺码:</label></td><td><input type="checkbox" name="p_size" value="S码" ><span>S码</span><input type="checkbox" name="p_size" value="M码" ><span>M码</span><input type="checkbox" name="p_size" value="L码" ><span>L码</span><input type="checkbox" name="p_size" value="均码" ><span>均码</span></td>
+               <td><label >颜色:</label></td><td><input type="text" name="color" class="form-control" placeholder="多个颜色以,号分隔"></td></tr>
+           <tr><td><label>售价:</label></td><td><input type="text" name="price" class="form-control"></td>
+           <td><label >数量:</label></td><td><input type="text" name="p_num" class="form-control"></td></tr>
+           <tr><th><label>商品图片:</label></th><td colspan="2"><div class="imgbox"><a class="uploadp"><i class="glyphicon glyphicon-plus"></i></a></div><div class="imgbox"><a class="uploadp"><i class="glyphicon glyphicon-plus"></i></a></div><div class="imgbox"><a class="uploadp"><i class="glyphicon glyphicon-plus"></i></a></div><div class="imgbox"><a class="uploadp"><i class="glyphicon glyphicon-plus"></i></a></div>
+               <input type="file" name="pic" id="upfile" style="display:none"></td>
+               <td><label >类目:</label></td><td class="catehandle"><select name="p_category" class="cate form-control">
+                   {%for cate in cates%}<option value="{{cate._id.toString()}}">{{cate.name}}</option>{%endfor%}
+                  </select>
+                   <div class="addcates">
+                   <input type="text" name="cate" class="addcate form-control"><button class="btn btn-default" id="add-cate">添加类目</button><p class="mess"></p></div>
+                  </td>
+
+           </tr>
+           <tr><th><label>商品描述:</label></th><td colspan="4"><textarea name="p_des" id="desc" class="form-control well"></textarea></td></tr>
+       </table>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" class="status" value="1" style="display: block;">立刻上架
+            </label><span class="uploadmess"></span>
+            <button type="submit" id="upload" class="btn btn-default pull-right">发布产品</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    //图片上传
+    $('.uploadp').on('click',function () {
+      var _thisa=this;
+      $('#upfile').trigger('click');
+      $('#upfile').on('change',function(){
+        if($(this).val() != ''){
+          var formData = new FormData();
+          formData.append("file",$("#upfile")[0].files[0]);
+          $.ajax({
+            url:'/api/uploadimg?type=product',
+            type:'post',
+            data:formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+              $(_thisa).hide();
+              var Img=$('<img class="p_pic" style="width:100px;height: 100px;" />');
+              $(Img).attr('src',data);
+              $(_thisa).closest('.imgbox').append(Img);
+            }
+          })
+          $('#upfile').off('change');
+        }
+      })
+    })
+    //类目管理
+    $('#add-cate').on('click',function () {
+      var cate = $('.addcate').val();
+      if(cate==''){
+        $('.mess').text('输入内容为空');
+      }else{
+        $.post('/api/add_cate',{category:cate},function (data) {
+          $('.mess').text(data.mess);
+          if(!data.code){
+            //todo
+          }
+        })
+      }
+    })
+    //添加商品
+    $('#upload').on('click',function () {
+      var p_title = $('input[name="p_title"]').val();
+      var p_id = $('input[name="p_id"]').val();
+      var p_material = $('input[name="p_material"]').val();
+      var p_tag = $('select[name="p_tag"]').val();
+      var price = $('input[name="price"]').val();
+      var p_num = $('input[name="p_num"]').val();
+      var color =$('input[name="color"]').val().split(/,|，/);
+      var p_size=[];
+      $('input[name="p_size"]:checked').each(function () {
+        p_size.push($(this).val());
+      });
+      var p_pic =[];
+      $('.p_pic').each(function () {
+        p_pic.push($(this).attr('src'));
+      })
+      var p_category = $('select[name="p_category"]').val();
+      var p_des = $('textarea[name="p_des"]').val();
+      if($('.status').prop('checked')){
+        var status = $('.status').val();
+      }else {
+        var status = 0;
+      }
+      if(p_title==''||p_id.length!=6||p_num==''||p_material==''||price==''||p_des==''){
+       var str ='商品填写有误！';
+        if(color[0]==''){
+          str ='颜色有误';
+        }else if(p_size.length==0){
+          str ='尺码有误';
+        }else if(p_pic.length!=4){
+          str ='图片有误';
+        }
+        //console.log();
+        $('.uploadmess').text(str);
+            return;
+      }
+      $.post('/api/add_product',{p_title:p_title,p_id:p_id,p_material:p_material,p_tag:p_tag,p_size:p_size,color:color,price:price,p_num:p_num,p_pic:p_pic,p_category:p_category,p_des:p_des,status:status},function (data) {
+        $('.uploadmess').text(data.mess);
+        if(!data.code){
+
+        }
+      })
+
+    })
+
+</script>
+{% endblock %}

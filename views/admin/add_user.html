@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<style>
+    .box{
+        width:70%;
+        margin:30px 0 0 50px;
+    }
+    #mess{
+        color:#e8000c;
+        font-size:14px;
+        padding-left:14px;
+    }
+</style>
+<div class="panel panel-default box">
+    <div class="panel-heading">
+        <h3 class="panel-title">添加用户</h3>
+    </div>
+    <div class="panel-body">
+            <div class="form-group">
+                <label for="uname">用户名</label><input type="text" id="uname" name="uname" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="pass">密码</label><input type="password" id="pass" name="password" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="rpass">确认密码</label><input type="password" id="rpass" name="rpassword" class="form-control">
+            </div>
+            <div class="form-group">
+                <select name="type" id='type' class="form-control">
+                    <option value="0">用户</option>
+                    <option value="1">作者</option>
+                    <option value="2">管理员</option>
+                </select>
+            </div>
+            <span class="pull-left" id="mess"></span>
+            <div class="form-group pull-right">
+                <input type="reset" value="重置" class="btn btn-default">
+                <input type="submit" value="添加" class="btn btn-primary" id="reg">
+            </div>
+    </div></div>
+<script>
+  $('#reg').on('click',function(){
+    var uname=$('#uname').val();
+    var pass=$('#pass').val();
+    var rpass=$('#rpass').val();
+    var type=$('#type').val();
+    $.post('/api/register',{username:uname,password:pass,repassword:rpass,type:type},function (data) {
+      $('#mess').html(data.mess);
+        if(!data.code){
+          setTimeout(function() {
+           location.href='/admin/user';
+          }, 1000);
+        }
+    },'json')
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<style>
+    .list{
+        margin-bottom: 20px;
+    }
+    .list .pane{
+        height:120px;
+        display: inline-block;
+        border-radius:4px;
+        width:100%;
+        color:#fff;
+        box-sizing: border-box;
+        padding:20px 20px;
+    }
+    .pane.primary{
+        background: #337ab7;
+    }
+    .pane.success{
+        background: #5cb85c;
+    }
+    .pane.warning{
+        background: #f0ad4e;
+    }
+    .pane.danger{
+        background: #d9534f;
+    }
+    .list .pane span{
+        font-size:48px;
+        float: left;
+        height:100%;
+        vertical-align: top;
+        top:10px;
+        line-height: 50px;
+        margin-right: 20px;
+    }
+    .list .pane h3{
+        margin-top: 0;
+        font-size:32px;
+    }
+    .list .pane p{
+        font-size:16px;
+    }
+    .list a{
+        cursor: pointer;
+    }
+    .dchart{
+        width:60%;
+    }
+</style>
+<div class="row list">
+    <div class="col-md-3"><a class="pane primary"><span class="glyphicon glyphicon-user"></span><h3>100</h3><p>访客数</p></a></div>
+    <div class="col-md-3"><a class="pane success"><span class="glyphicon glyphicon-shopping-cart"></span><h3>30</h3><p>加入购物车</p></a></div>
+    <div class="col-md-3"><a class="pane warning"><span class="glyphicon glyphicon-pencil"></span><h3>100</h3><p>用户评论</p></a></div>
+    <div class="col-md-3"><a class="pane danger"><span class="glyphicon glyphicon-calendar"></span><h3>100</h3><p>待处理订单</p></a></div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">访客统计</div>
+            <div class="panel-body">
+                <canvas id='Lchart'></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 panel-right">
+        <div class="dchart"><canvas id="Dchart"></canvas></div>
+    </div>
+</div>
+<script src="/public/js/Chart.min.js"></script>
+<script>
+    $(function() {
+        var chartData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "访客数",
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: "rgba(75,192,192,0.4)",
+                    borderColor: "rgba(75,192,192,1)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    spanGaps: false,
+                }
+            ]
+        };
+        var ctx = $("#Lchart").get(0).getContext("2d");
+        window.myLine = new Chart(ctx,{
+          type:'line',
+            data: chartData
+        });
+        //环图
+        var data2 = {
+            labels: [
+                "Red",
+                "Blue",
+                "Yellow"
+            ],
+            datasets: [
+                {
+                    data: [300, 50, 100],
+                    backgroundColor: [
+                        "#FF6384",
+                        "#36A2EB",
+                        "#FFCE56"
+                    ],
+                    hoverBackgroundColor: [
+                        "#FF6384",
+                        "#36A2EB",
+                        "#FFCE56"
+                    ]
+                }]
+        };
+        var ctx2= $("#Dchart").get(0).getContext("2d");
+        window.myDoughnutChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: data2,
+            options:{
+                cutoutPercentage:40
+            }
+        });
+    })
+</script>
+{% endblock %}
