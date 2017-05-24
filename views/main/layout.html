@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>xy商城</title>
+    <title>Male商城</title>
     <link rel="stylesheet" href="/public/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="/public/css/bootstrap-theme.min.css" type="text/css" />
     <link href="/public/css/main.css" rel="stylesheet" type="text/css">
@@ -43,6 +43,15 @@
         </div>
         <div class="mainRight col-md-3 col-sm-3">
 
+            <div class="rightBox panel">
+                <div class="title"><span>内容搜索</span></div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="搜索你感兴趣的内容...">
+                    <span class="input-group-addon">
+						<a href="#"><span class="glyphicon glyphicon-search"></span></a>
+					</span>
+                </div>
+            </div>
             {% if userInfo._id %}
             <div class="rightBox panel" id="userInfo">
                 <div class="title"><span>用户信息</span></div>
@@ -74,15 +83,37 @@
             {%endif%}
 
             <div class="rightBox panel">
-                <div class="title"><span>社区</span></div>
-                <p><a href="#" target="_blank" class="colDanger">最新优惠</a></p>
-                <p><a href="#" target="_blank" class="colDanger">限时特惠</a></p>
+                <div class="title"><span>热文推送</span></div>
+                <div class="list-group">
+                    <a href="" class="list-group-item">试过张继科的小蓝鞋吗？教你如何搭配驾驭它<small class="pull-right">2017-04-24</small></a>
+                    <a href="" class="list-group-item">试过张继科的小蓝鞋吗？教你如何搭配驾驭它<small class="pull-right">2017-04-24</small></a>
+                    <a href="" class="list-group-item">试过张继科的小蓝鞋吗？教你如何搭配驾驭它<small class="pull-right">2017-04-24</small></a>
+                </div>
             </div>
+
+            <div class="rightBox panel">
+                <div class="title"><span>产品推荐</span></div>
+                <div class="thumbnail">
+                    <a href="/pdetail?p_id={{product._id.toString()}}"><img src="http://localhost:2000/public/upload/product/8685224103867539.jpg" class="" /></a>
+                    <div class="caption">
+                        <h5>英爵伦 男士短袖T恤 夏半袖新款修身衣服男生.</h5>
+                        <p><span class="price">￥299</span> <a href="/pdetail" class="btn addcart">查看详情</a></p>
+                    </div>
+                </div>
+                <div class="thumbnail">
+                    <a href="/pdetail?p_id={{product._id.toString()}}"><img src="http://localhost:2000/public/upload/product/8685224103867539.jpg" class="" /></a>
+                    <div class="caption">
+                        <h5>英爵伦 男士短袖T恤 夏半袖新款修身衣服男生.</h5>
+                        <p><span class="price">￥299</span> <a href="/pdetail" class="btn addcart">查看详情</a></p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 
-<div class="copyright textCenter">Copyright © miaov.com 版权所有 | 京ICP备08102442号</div>
+<div class="copyright textCenter">Copyright © yanqi.site 版权所有 | 冀ICP备08102442号</div>
 </body>
 </html>

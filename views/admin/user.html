@@ -1,0 +1,143 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<style>
+    .header{
+        color:#454545;
+        border-left:8px solid #4A5064;
+        background: #fff;
+        height: 50px;
+        line-height: 50px;
+        padding-left:24px;
+        margin:0 0 20px 0;
+    }
+    .header h3{
+        margin:0;
+        line-height:50px;
+    }
+    .handle{
+        padding:20px 0  ;
+        background-color: #fff;
+    }
+    .handle a.btn{
+        margin-left: 10px;
+    }
+    table{
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+    table th,table td{
+        text-align: center;
+    }
+    table td{
+        vertical-align: middle !important;
+    }
+    table td .btn{
+        margin-right: 5px;
+    }
+    table td input[type='checkbox']{
+        width:24px;
+        height:24px;
+        background: #fff;
+        border-radius: 0;
+    }
+    .handle,table{
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+    .dropdown-menu{
+        min-width:100px;
+    }
+</style>
+<div class="header">
+    <h3>用户管理</h3>
+</div>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="/admin/article">所有用户</a></li>
+</ul>
+<div class="handle">
+    <a href="/admin/add_user" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign"></i>添加用户</a>
+    <a href="" class="btn btn-warning" id="del_all"><i class="glyphicon glyphicon-minus-sign"></i>批量删除</a>
+    <div class="col-md-5 pull-right">
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ><span class="search-key" style="margin-right: 4px;">用户名</span><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">用户名</a></li>
+                    <li><a href="#">类型</a></li>
+                </ul>
+            </div><!-- /btn-group -->
+            <input type="text" class="form-control">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+              </span>
+        </div>
+    </div>
+</div>
+<!--table-->
+<table class="table">
+    <tr><th colspan="2">用户编号</th><th>用户名</th><th>用户类型</th><th>操作</th></tr>
+    {%for user in users%}
+    <tr><td><input type="checkbox" name="p_id" value="{{user._id.toString()}}"></td><td class="textl">{{user._id.toString()}}</td><td>{{user.uname}}</td><td>{{user.type}}</td><td>
+        <a href="" class="btn btn-sm btn-primary">修改</a><a href="/api/del_art" class="btn btn-sm btn-primary">删除</a></td></tr>
+    {%endfor%}
+</table>
+<!--分页-->
+<ul class="pager">
+    {%if page==1&&page==pages%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==1%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li class="next"><a href="/admin/user?page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==pages%}
+    <li class="previous"><a href="/admin/user?page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%else%}
+    <li class="previous"><a href="/admin/user?page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li class="next"><a href="/admin/user?page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%endif%}
+</ul>
+<script>
+    $('.dropdown-menu a').on('click',function () {
+        $('.search-key').text($(this).text());
+    })
+    //批量删除
+    $('#del_all').on('click',function (e) {
+        e.preventDefault();
+        var p_ids=[];
+        $('input[name="p_id"]:checked').each(function () {
+            p_ids.push($(this).val());
+        });
+        if(p_ids==[]){
+            return;
+        }
+        $.post('/api/del_pro',{p_ids:p_ids},function (data) {
+            if(data){
+                location.reload();
+            }else{
+                alert('更新失败');
+            }
+        })
+    })
+    //批量下架
+    $('.up_status').on('click',function () {
+        var status = $(this).attr('data-status');
+        var p_ids=[];
+        $('input[name="p_id"]:checked').each(function () {
+            p_ids.push($(this).val());
+        });
+        if(p_ids==[]){
+            return;
+        }
+        $.post('/api/up_status',{p_ids:p_ids,status:status},function (data) {
+            if(data){
+                location.reload();
+            }else{
+                alert('更新失败');
+            }
+
+        })
+    })
+</script>
+{% endblock %}

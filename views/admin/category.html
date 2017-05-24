@@ -1,0 +1,109 @@
+{%extends 'layout.html'%}
+
+{%block main%}
+<style>
+    .header{
+        color:#454545;
+        border-left:8px solid #4A5064;
+        background: #fff;
+        height: 50px;
+        line-height: 50px;
+        padding-left:24px;
+        margin:0 0 20px 0;
+    }
+    .header h3{
+        margin:0;
+        line-height:50px;
+    }
+    .panel .addcate{
+        width: 340px;
+    }
+    table{
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+    table th,table td{
+        text-align: center;
+    }
+    table td{
+        vertical-align: middle !important;
+    }
+    table td .btn{
+        margin-right: 5px;
+    }
+    .categorymodal .modal-dialog{
+        margin-top: 25vh;
+    }
+</style>
+<div class="header">
+    <h3>类目管理</h3>
+</div>
+<div class="panel">
+    <div class="panel-heading"><h4>分类列表
+        <div class="input-group pull-right addcate">
+            <input type="text" name="add_tag" class="form-control add_category" placeholder="添加类目...">
+            <span class="input-group-btn">
+                        <button class="btn btn-default" id="add-category" type="button">添加分类</button>
+                    </span>
+        </div></h4></div>
+    <div class="panel-body">
+        <table class="table">
+            <tr><th>编号</th><th>分类名称</th><th>操作</th></tr>
+            {%for category in categories%}
+            <tr><td>{{loop.index}}</td><td class="textl"><input type="text" value="{{category.name}}" class="form-control"></td><td>
+                <a href="javascript:;" class="btn btn-sm btn-primary ccategory" data-tid="{{category._id.toString()}}">修改</a><a href="/api/del_cate?c_id={{category._id.toString()}}" class="btn btn-sm btn-primary">删除</a></td></tr>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+<!--弹窗-->
+<div class="modal fade categorymodal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">信息</h4>
+            </div>
+            <div class="modal-body">
+                <p class="mess"></p>
+            </div>
+            <div class="modal-footer">
+                <a href="/admin/cate" class="btn btn-primary">确认</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+
+    //添加tag
+    $('#add-category').on('click',function () {
+        var cate = $('.add_category').val();
+        if(cate==''){
+            $('.add_category').attr('placeholder','类目名不合法');
+        }else{
+            $.post('/api/add_cate',{category:cate},function (data) {
+                $('.categorymodal p').text(data.mess);
+                $('.modal').modal('toggle');
+            })
+        }
+        $('.add_category').val('');
+    })
+    //修改tag
+    $('.ccategory').on('click',function () {
+        var c_id =$(this).attr('data-tid');
+        var catename=$(this).closest('tr').find('input').val();
+        if(catename==''){
+            $('.categorymodal p').text('类目名不能为空');
+            $('.modal').modal('toggle');
+        }else{
+            $.post('/api/update_cate',{c_id:c_id,catename:catename},function (data) {
+                console.log(data.mess);
+                $('.categorymodal p').text(data.mess);
+                $('.modal').modal('toggle');
+            })
+        }
+    })
+</script>
+{%endblock%}

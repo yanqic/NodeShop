@@ -8,11 +8,14 @@ nav.navbar-inverse{
 .navbar-inverse .navbar-brand,.navbar-inverse .navbar-nav>li>a{
     color:#fff;
 }
+nav .dropdown-menu{
+    min-width:130px;
+}
 .contain{
     padding:0;
 }
 .contain .board{
-    position: fixed;
+    position: absolute;
     top:50px;
     left:0;
     bottom:0;

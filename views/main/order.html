@@ -25,18 +25,24 @@
         /*display: inline-block;*/
         text-align: right;
     }
-
+    input.sum{ border:none;
+        width:50px;}
 </style>
+<form action="/pay" method="get">
 <div class="panel panel-default">
     <div class="panel-heading">收货信息</div>
     <div class="panel-body">
         <div class="input-group">
             <span class="input-group-addon">姓名:</span>
-            <input type="text" class="form-control" placeholder="Username" value="严祺">
+            <input type="text" class="form-control" placeholder="收件人" value="严祺" name="uname">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">联系电话:</span>
+            <input type="text" class="form-control" placeholder="联系电话" name="phone">
         </div>
         <div class="input-group">
             <span class="input-group-addon">详细地址:</span>
-            <input type="text" class="form-control" placeholder="详细地址">
+            <input type="text" class="form-control" placeholder="详细地址" name="address">
         </div>
         <div></div>
         <label class="note" for="note">备注: <textarea name="note" id="note" class="form-control"></textarea></label>
@@ -47,13 +53,22 @@
     <div class="panel-body">
         <table class="table">
             <tr><th>商品名称</th><th>单价</th><th>数量</th><th>小计</th></tr>
+            {%set sum=0%}
             {%for order in orders%}
             <tr><td><img src="{{order.cp_id.p_pic[0]}}" class="pic"><p class="title">{{order.cp_id.p_title}}</p></td>
-            <td>{{order.cp_id.price}}</td><td>{{order.num}}</td><td>{{order.cp_id.price*order.num}}</td>
-            </tr>{%endfor%}
-            <tr><td colspan="3"><div class="count">应付金额 <span>165</span></div></td>
-            <td><button class="btn btn-primary">提交订单</button></td></tr>
+            <td>{{order.cp_id.price}}</td><td>{{order.num}}</td><td>{{order.cp_id.price*order.num}}</td>{%set sum=sum+order.cp_id.price*order.num%}
+            </tr>
+            <input type="checkbox" style="display: none;" checked name="o_id" value="{{order._id.toString()}}">{%endfor%}
+            <tr><td colspan="3"><div class="count">应付金额 <span><input name="sum" type="text" class="sum" readonly value="{{sum}}"></span></div></td>
+            <td><button class="btn btn-primary" type="submit">提交订单</button></td></tr>
         </table>
     </div>
 </div>
+</form>
+<script>
+    var sum=0;
+    $('.psum').each(function () {
+        sum+=parseInt($(this).text());
+    })
+</script>
 {%endblock%}

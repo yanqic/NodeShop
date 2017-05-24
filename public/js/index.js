@@ -71,7 +71,7 @@ $(function() {
     //退出
     $('#logout').on('click', function() {
         $.ajax({
-            url: '/api/user/logout',
+            url: '/api/u_logout',
             success: function(result) {
                 if (!result.code) {
                     window.location.reload();

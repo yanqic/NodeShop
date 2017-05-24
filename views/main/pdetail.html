@@ -155,7 +155,7 @@
                     </div>
                     <div class="handle">
                         <a href="javascript:;"  data-pid="{{pro._id.toString()}}" class="btn addcart">加入购物车</a>
-                        <a href="" class="btn buy">现在购买</a>
+                        <a href="javascript:;" class="btn buy">现在购买</a>
                     </div>
                     <div class="others">
                         <div class="sku">商家编码:<span>{{pro.p_id}}</span></div>
@@ -229,11 +229,22 @@
         var color = $("input[name='color']:checked").val();
         var size = $("input[name='size']:checked").val();
         var num = $("input[name='num']").val();
-        console.log(p_id)
         $.post('/api/add_cart',{p_id:p_id,color:color,size:size,num:num},function (data) {
            if(data.code==0){
                $('.modal').modal('toggle')
            }
+        })
+    })
+    $('.buy').on('click',function(){
+        var p_id = $('.addcart').attr('data-pid');
+        var color = $("input[name='color']:checked").val();
+        var size = $("input[name='size']:checked").val();
+        var num = $("input[name='num']").val();
+        $.post('/api/add_cart',{p_id:p_id,color:color,size:size,num:num},function (data) {
+            if(data.code==0){
+              console.log(data);
+                window.location.href="/order?ids="+data.c_id;
+            }
         })
     })
 </script>

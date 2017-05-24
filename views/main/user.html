@@ -1,12 +1,58 @@
 {%extends 'layout.html'%}
 
 {%block content%}
+<style>
+    .person .list-group-item{
+        padding:20px 15px;
+    }
+    .person .tit{
+        width:200px;
+        display: inline-block;
+    }
+    .person .tit i{
+        margin-right: 10px;
+    }
+    .person .handle{
+        float:right;
+    }
+    /*order*/
+    th{
+        background: #EEEEEE;
+    }
+    .u_order td{
+        vertical-align: middle !important;
+    }
+    .u_order td img{
+        width:80px;
+        height:80px;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">个人资料</div>
+    <div class="panel-body person">
+        <div class="list-group">
+            <div class="list-group-item"><span class="tit"><i class="glyphicon glyphicon-user"></i>用户名</span> <span>yanqi</span><span class="handle">不可修改</span></div>
+            <div class="list-group-item"><span class="tit"><i class="glyphicon glyphicon-lock"></i>密码</span> <span>********</span><span class="handle"><a href="">修改</a></span></div>
+            <div class="list-group-item"><span class="tit"><i class="glyphicon glyphicon-lock"></i>手机</span> <span>18875600945</span><span class="handle"><a href="">修改</a></span></div>
+            <div class="list-group-item"><span class="tit"><i class="glyphicon glyphicon-map-marker"></i>收货地址</span> <span>河北省秦皇岛市海港区</span><span class="handle"><a href="">修改</a></span></div>
+        </div>
+    </div>
+</div>
 <div class="panel panel-default">
     <div class="panel-heading">我的订单</div>
     <div class="panel-body">
-        <div class="table">
-
-        </div>
+        <table class="table u_order">
+            {%for uorder in uorders %}
+            <tr><th colspan="2">{{ uorder.addTime|date('Y年m月d日', -8*60)}}</th><th>单价</th><th>数量</th><th>应付总额</th><th>订单状态</th></tr>
+            {%for pid in uorder.o_id%}
+                {%if loop.index == 1 %}
+            <tr><td><img src="{{pid.cp_id.p_pic[0]}}"></td><td>{{pid.cp_id.p_title}}</td><td>{{pid.cp_id.price}}</td><td>{{pid.num}}</td><td rowspan="{{uorder.o_id.length}}">{{uorder.sum}}</td><td rowspan="{{uorder.o_id.length}}">{{uorder.status}}</td></tr>
+            {%else%}
+            <tr><td><img src="{{pid.cp_id.p_pic[0]}}"></td><td>{{pid.cp_id.p_title}}</td><td>{{pid.cp_id.price}}</td><td>{{pid.num}}</td></tr>
+                {%endif%}
+            {%endfor%}
+            {%endfor%}
+        </table>
     </div>
 </div>
 {%endblock%}

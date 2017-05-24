@@ -6,6 +6,8 @@ var Article = require('../models/Article');
 var Tag = require('../models/Tag');
 var Product = require('../models/Product');
 var Cart = require('../models/Cart');
+var Order = require('../models/Order');
+var User = require('../models/User');
 
 var data;
 router.use(function(req,res,next){
@@ -27,7 +29,7 @@ router.get('/',function(req,res){
   data.tag = req.query.tag || '';
   data.count = 0;
   data.page = Number(req.query.page || 1);
-  data.limit = 5;
+  data.limit = 4;
   data.pages = 0;
   var where ={};
   if (data.tag) {
@@ -51,12 +53,20 @@ router.get('/article',function (req,res) {
   var a_Id = req.query.a_id || '';
   Article.findOne({
     _id: a_Id
-  }).populate(['author']).then(function (article) {
+  }).populate(['p_id','author']).then(function (article) {
     data.article = article;
 
     article.views++;
     article.save();
-
+    if(data.userInfo){
+      User.findOne({uname:userInfo.uname}).then(function (user) {
+        if(user.u_tag.indexof(article.a_tag[0])==-1){
+          user.u_tag.push(article.a_tag[0]);
+          user.markModified('u_tag');
+          user.save();
+        }
+      })
+    }
     res.render('main/article', data);
   });
 })
@@ -96,7 +106,7 @@ router.get('/shop',function (req,res) {
 //cart列表
 router.get('/cart',function (req,res) {
   var c_Id = data.userInfo._id||'';
-  Cart.find({u_id:c_Id}).populate(['cp_id']).then(function (cartInfo) {
+  Cart.find({u_id:c_Id,status:false}).populate(['cp_id']).then(function (cartInfo) {
     data.carts=cartInfo;
     res.render('main/cart',data);
   })
@@ -118,10 +128,33 @@ router.get('/order',function (req,res) {
   var ids = req.query.ids;
   Cart.find({_id:{$in:ids}}).populate(['cp_id']).then(function (cartInfo) {
     data.orders=cartInfo;
+    data.orders=cartInfo;
     res.render('main/order',data);
   })
 })
 router.get('/pay',function (req,res) {
-  res.render('main/pay',data);
+  var o_id =req.query.o_id;
+  var order =new Order({o_id:o_id,u_id:data.userInfo._id,sum:req.query.sum,uname:req.query.uname,phone:req.query.phone,address:req.query.address,note:req.query.note});
+  order.save().then(function (orMess) {
+    if(orMess){
+      data.payid=orMess._id;
+      return Cart.update({_id:{$in:o_id}},{status:true},{multi:true}
+      );
+    }c
+  }).then(function(upcart){
+    res.render('main/pay',data);
+  })
+
+})
+router.get('/user',function (req,res) {
+  var c_Id = data.userInfo._id||'';
+  Order.find({u_id:c_Id}).populate({
+    path: 'o_id',model:'Cart',populate:{
+      path:'cp_id',model:'Product'
+    }
+  }).then(function (userInfo) {
+    data.uorders=userInfo;
+    res.render('main/user',data);
+  })
 })
 module.exports = router;

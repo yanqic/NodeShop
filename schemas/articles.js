@@ -9,10 +9,8 @@ module.exports = new mongoose.Schema({
   a_abs: String,
   a_tag:	[{ type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag' }],
-  p_id:{
-    type:Array,
-    default:[]
-  },
+  p_id:[{ type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product' }],
   content: String,
   addTime: {
     type: Date,

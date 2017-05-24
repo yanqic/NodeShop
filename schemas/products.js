@@ -30,7 +30,7 @@ module.exports = new mongoose.Schema({
     ref: 'Category'
   },
   p_des:	String,
-  status:	String,
+  status:	Number,
   p_views:{
     type: Number,
     default: 0

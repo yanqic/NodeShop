@@ -1,0 +1,110 @@
+{%extends 'layout.html'%}
+
+{%block main%}
+<style>
+    .header{
+        color:#454545;
+        border-left:8px solid #4A5064;
+        background: #fff;
+        height: 50px;
+        line-height: 50px;
+        padding-left:24px;
+        margin:0 0 20px 0;
+    }
+    .header h3{
+        margin:0;
+        line-height:50px;
+    }
+    .panel .addtag{
+        width: 340px;
+    }
+    table{
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+    table th,table td{
+        text-align: center;
+    }
+    table td{
+        vertical-align: middle !important;
+    }
+    table td .btn{
+        margin-right: 5px;
+    }
+    .tagmodal .modal-dialog{
+        margin-top: 25vh;
+    }
+</style>
+<div class="header">
+    <h3>标签管理</h3>
+</div>
+<div class="panel">
+    <div class="panel-heading"><h4>标签列表
+        <div class="input-group pull-right addtag">
+        <input type="text" name="add_tag" class="form-control add_tag" placeholder="添加标签...">
+        <span class="input-group-btn">
+                        <button class="btn btn-default" id="add-tag" type="button">添加标签</button>
+                    </span>
+    </div></h4></div>
+    <div class="panel-body">
+        <table class="table">
+            <tr><th>编号</th><th>标签名称</th><th>操作</th></tr>
+            {%for tag in tags%}
+            <tr><td>{{loop.index}}</td><td class="textl"><input type="text" value="{{tag.name}}" class="form-control"></td><td>
+                <a href="javascript:;" class="btn btn-sm btn-primary ctag" data-tid="{{tag._id.toString()}}">修改</a><a href="/api/del_tag?t_id={{tag._id.toString()}}" class="btn btn-sm btn-primary">删除</a></td></tr>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+<!--弹窗-->
+<div class="modal fade tagmodal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            <h4 class="modal-title">信息</h4>
+        </div>
+        <div class="modal-body">
+            <p class="mess">恭喜你，标签添加成功！</p>
+        </div>
+        <div class="modal-footer">
+            <a href="/admin/tag" class="btn btn-primary">确认</a>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+
+    //添加tag
+    $('#add-tag').on('click',function () {
+        var tag = $('.add_tag').val();
+        if(tag==''){
+            $('.add_tag').attr('placeholder','标签不合法');
+        }else{
+            console.log(tag);
+            $.post('/api/add_tag',{tag:tag},function (data) {
+                $('.tagmodal p').text(data.mess);
+                $('.modal').modal('toggle');
+            })
+        }
+        $('.add_tag').val('');
+    })
+    //修改tag
+    $('.ctag').on('click',function () {
+      var t_id =$(this).attr('data-tid');
+        var tagname=$(this).closest('tr').find('input').val();
+        if(tagname==''){
+            $('.tagmodal p').text('标签不能为空');
+            $('.modal').modal('toggle');
+        }else{
+            $.post('/api/update_tag',{t_id:t_id,tagname:tagname},function (data) {
+                console.log(data.mess);
+                $('.tagmodal p').text(data.mess);
+                $('.modal').modal('toggle');
+            })
+        }
+    })
+</script>
+{%endblock%}

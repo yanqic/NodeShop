@@ -18,12 +18,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="#">Male商城</a>
         </div>
         <!--其他导航-->
 
         <!--<div id='myCollapse' class="navbar-collapse collapse">-->
-            <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a type="button" data-toggle="dropdown" style="cursor: pointer;">欢迎您，{{adminInfo.uname}} <span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right">
@@ -34,16 +34,8 @@
                         <li><a href=""><span class="glyphicon glyphicon-heart"></span> 我的收藏</a></li>
                     </ul>
                 </li>
-                <li><a href="/api/admin/logout"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
+                <li><a href="/api/a_logout"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
             </ul>
-            <form class="navbar-form navbar-right">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Go!</button>
-                    </span>
-                </div>
-            </form>
         <!--</div>-->
     </div>
 </nav>
@@ -56,20 +48,20 @@
                     <ul class="sub-nav">
                         <li><a href="/admin/add_product">添加产品</a></li>
                         <li><a href="/admin/product">产品总览</a></li>
-                        <li><a href="">类目管理</a></li>
+                        <li><a href="/admin/cate">类目管理</a></li>
                     </ul>
                 </li>
                 <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-stats"></i>交易管理</a>
                     <ul class="sub-nav">
-                        <li><a href="">历史订单</a></li>
-                        <li><a href="">待处理</a></li>
+                        <li><a href="/admin/order">历史订单</a></li>
+                        <li><a href="/admin/order">待处理</a></li>
                     </ul>
                 </li>
                 <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-send"></i>内容管理</a>
                     <ul class="sub-nav">
                         <li><a href="/admin/article">文章总览</a></li>
-                        <li><a href="/admin/edit">发布文章</a></li>
-                        <li><a href="">标签管理</a></li>
+                        <li><a href="/admin/add_art">发布文章</a></li>
+                        <li><a href="/admin/tag">标签管理</a></li>
                     </ul>
                 </li>
                 <li class="top-list"><a class="top-a" href=""><i class="glyphicon glyphicon-user"></i>会员管理</a>

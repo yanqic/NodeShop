@@ -15,12 +15,56 @@
     .about i{
         margin-right:5px;
     }
+    .pro li{
+        overflow: hidden;
+        position: relative;
+    }
+    .pro .p_title{
+        color: #818181;
+        text-indent: 0;
+        font-size:20px;
+    }
+    .pro .price{
+        font-size:24px;
+        font-weight: 400;
+    }
+    .pic{
+        width:140px;
+        height: 140px;
+        float: left;
+        margin-right: 10px;
+    }
+    .pro .mess{
+        position: absolute;
+        right:20px;
+        bottom:20px;
+        width:100%;
+        padding-left: 190px;
+    }
+    .pro a{
+        color: #da0d15;
+        border:1px solid #da0d15;
+        border-radius: 4px;
+        padding:6px 15px;
+        font-size:16px;
+        float: right;
+    }
 </style>
 <div class="panel panel-default">
     <div class="panel-body art">
-        <h3 class="title">Node.js v4 LTS 成为 Ghost 推荐版本</h3>
+        <h3 class="title">{{article.a_title}}</h3>
         <div class="about"><span class="author"><i class="glyphicon glyphicon-user"></i>{{article.author.uname}}</span><span class="date"><i class="glyphicon glyphicon-time"></i>{{article.addTime|date('Y年m月d日 H:i:s', -8*60)}}</span><span class="look"><i class="glyphicon glyphicon-eye-open"></i>{{article.views}}</span></div>
         <p>{%autoescape false%}{{article.content}}{%endautoescape%}</p>
+        <ul class="list-group pro">
+            {%for p_id  in article.p_id%}
+            <li class="list-group-item"><img src="{{p_id.p_pic[0]}}" class="pic"/>
+                <p class="p_title">{{p_id.p_title}}</p>
+                <div class="mess">
+                    <span class="price">￥{{p_id.price}}</span><a href="/pdetail?p_id={{p_id._id.toString()}}">去购买</a>
+                </div>
+            </li>
+            {%endfor%}
+        </ul>
     </div>
 </div>
 {%endblock%}

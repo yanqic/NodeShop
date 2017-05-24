@@ -79,7 +79,7 @@ router.post('/admin/login',function(req,res){
       return;
     }else if(adminInfo.type==0){
       resData.code=3;
-      resData.mess='管理员账户错误';
+      resData.mess='非管理员账号';
       res.json(resData);
       return;
     }
@@ -122,12 +122,12 @@ router.post('/user/login',function(req,res){
     return;
   })
 })
-router.get('/admin/logout',function(req,res){
+router.get('/a_logout',function(req,res){
   delete req.session.adminInfo;
   res.render('admin/login');
 })
 //用户退出
-router.get('/user/logout',function(req,res){
+router.get('/u_logout',function(req,res){
   delete req.session.userInfo;
   res.json(resData);
 })
@@ -236,6 +236,23 @@ router.post('/add_tag',function(req,res){
     res.json(resData);
   })
 })
+//删除标签
+router.get('/del_tag',function(req,res){
+  var t_id = req.query.t_id;
+  Tag.remove({_id:t_id}).then(function () {
+    resData.mess='删除标签成功';
+    res.redirect('back');
+  })
+})
+//更新标签
+router.post('/update_tag',function (req,res) {
+  var t_id =req.body.t_id;
+  var name = req.body.tagname;
+  Tag.update({_id:t_id},{name:name}).then(function () {
+    resData.mess='标签修改成功！';
+    res.json(resData);
+  })
+})
 //关联产品
 router.post('/check_pid',function (req,res) {
   var p_id = req.body.p_id;
@@ -270,6 +287,24 @@ router.post('/add_cate',function(req,res){
     res.json(resData);
   })
 })
+//删除类目
+router.get('/del_cate',function(req,res){
+  var c_id = req.query.c_id;
+  Category.remove({_id:c_id}).then(function () {
+    resData.mess='删除类目成功';
+    res.redirect('back');
+  })
+})
+//更新类目
+router.post('/update_cate',function (req,res) {
+  var c_id =req.body.c_id;
+  var name = req.body.catename;
+  Category.update({_id:c_id},{name:name}).then(function () {
+    resData.mess='类目更新成功！';
+    res.json(resData);
+  })
+})
+
 //上传商品
 router.post('/add_product',function (req,res) {
   var p_title=req.body.p_title,p_material=req.body.p_material,p_tag=req.body.p_tag,p_size=req.body.p_size,color=req.body.color,price=req.body.price,p_num=req.body.p_num,p_pic=req.body.p_pic,p_category=req.body.p_category,p_des=req.body.p_des,status=req.body.status;
@@ -286,6 +321,13 @@ router.post('/add_product',function (req,res) {
     }
   }).then(function (apMess) {
     resData.mess='添加产品成功';
+    res.json(resData);
+  })
+})
+//更新商品
+router.post('/up_pro',function (req,res) {
+  Product.update({p_id:req.body.p_id},{'p_title':req.body.p_title,'p_material':req.body.p_material,'p_tag':req.body.p_tag,'p_size':req.body.p_size,'color':req.body.color,'price':req.body.price,'p_num':req.body.p_num,'p_pic':req.body.p_pic,'p_category':req.body.p_category,'p_des':req.body.p_des,'status':req.body.status}).then(function (upstInfo) {
+    resData.mess='更新产品成功';
     res.json(resData);
   })
 })
@@ -322,7 +364,7 @@ router.post('/up_status',function (req,res) {
   }else{
     status=1;
   }
-  Product.update({p_id:{$in:p_ids}},{status:status}).then(function (upstInfo) {
+  Product.update({p_id:{$in:p_ids}},{status:status},{multi: true}).then(function (upstInfo) {
     resData.mess='更新成功！';
     res.json(resData);
   })
@@ -336,10 +378,25 @@ router.post('/add_article',function (req,res) {
     res.json(resData);
   })
 })
+//删除所有文章
+router.post('/del_art',function(req,res){
+  var _ids = req.body._ids;
+  Article.remove({_id:{$in:_ids}}).then(function () {
+    resData.mess='删除商品成功';
+    res.json(resData);
+  })
+})
+//删除一篇文章
+router.get('/del_art',function (req,res) {
+  Article.remove({_id:req.query._id}).then(function (delpInfo){
+    resData.mess='删除商品成功';
+    res.redirect('back');
+  })
+})
 //添加购物车
 router.post('/add_cart',function(req,res){
   var userInfo_id = req.session.userInfo._id;
-  Cart.findOne({cp_id:req.body.p_id,u_id:userInfo_id}).then(function (cartInfo) {
+  Cart.findOne({cp_id:req.body.p_id,u_id:userInfo_id,status:false}).then(function (cartInfo) {
     if(cartInfo){
       cartInfo.num++;
       cartInfo.save();
@@ -352,6 +409,7 @@ router.post('/add_cart',function(req,res){
     }
   }).then(function (addMess) {
     resData.mess='商品已成功加入购物车';
+    resData.c_id=addMess._id;
     res.json(resData);
   })
 })

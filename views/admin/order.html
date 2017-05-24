@@ -1,0 +1,164 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<style>
+    .header{
+        color:#454545;
+        border-left:8px solid #4A5064;
+        background: #fff;
+        height: 50px;
+        line-height: 50px;
+        padding-left:24px;
+        margin:0 0 20px 0;
+    }
+    .header h3{
+        margin:0;
+        line-height:50px;
+    }
+    .handle{
+        padding:20px 0  ;
+        background-color: #fff;
+    }
+    .handle a.btn{
+        margin-left: 10px;
+    }
+    table{
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+    table th{
+        background: #EEEEEE;
+    }
+    table td{
+        vertical-align: middle !important;
+    }
+    .u_order tr td:nth-child(5){
+        border-left: 1px solid #dddddd;
+        text-align: center;
+    }
+    .u_order td img{
+        width:80px;
+        height:80px;
+    }
+    table td .btn{
+        margin-right: 5px;
+    }
+    table td input[type='checkbox']{
+        width:24px;
+        height:24px;
+        background: #fff;
+        border-radius: 0;
+    }
+    .handle,table{
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+    .dropdown-menu{
+        min-width:100px;
+    }
+</style>
+<div class="header">
+    <h3>订单管理</h3>
+</div>
+<ul class="nav nav-tabs">
+    {%if status==1%}
+    <li><a href="/admin/order">所有订单</a></li>
+    <li class="active"><a href="/admin/order?status=1">发货中</a><li><a href="/admin/order?status=2">退款中</a></li></li>{% elseif status==2 %}<li><a href="/admin/order">所有订单</a></li>
+    <li><a href="/admin/order?status=1">发货中</a><li class="active"><a href="/admin/order?status=2">退款中</a></li></li>{%else%}
+    <li class="active"><a href="/admin/order">所有订单</a></li>
+    <li><a href="/admin/order?status=1">发货中</a></li><li><a href="/admin/order?status=2">退款中</a></li>{%endif%}
+</ul>
+<div class="handle">
+    <a href="" class="btn btn-warning" id="del_all"><i class="glyphicon glyphicon-minus-sign"></i>批量删除</a>
+    <div class="col-md-5 pull-right">
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ><span class="search-key" style="margin-right: 4px;">产品名</span><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">产品名</a></li>
+                    <li><a href="#">产品编号</a></li>
+                </ul>
+            </div><!-- /btn-group -->
+            <input type="text" class="form-control">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Search</button>
+              </span>
+        </div>
+    </div>
+</div>
+<!--table-->
+<table class="table u_order">
+    {%for uorder in uorders %}
+    <tr><th><input type="checkbox" name="_id" value="{{uorder._id.toString()}}"></th><th>{{ uorder.addTime|date('Y年m月d日', -8*60)}}</th><th>单价</th><th>数量</th><th>应付总额</th><th>买家</th><th>订单状态</th><th>操作</th></tr>
+    {%for pid in uorder.o_id%}
+    {%if loop.index == 1 %}
+    <tr><td><img src="{{pid.cp_id.p_pic[0]}}"></td><td>{{pid.cp_id.p_title}}</td><td>{{pid.cp_id.price}}</td><td>{{pid.num}}</td><td rowspan="{{uorder.o_id.length}}">{{uorder.sum}}</td><td rowspan="{{uorder.o_id.length}}">{{uorder.uname}}</td><td rowspan="{{uorder.o_id.length}}">{{uorder.status}}</td><td rowspan="{{uorder.o_id.length}}"><div class="dropdown"><button class="btn btn-default dropdown-toggle" data-toggle="dropdown">操作<span class="caret"></span></button><ul class="dropdown-menu">
+        <li><a href="#">发货</a></li>
+        <li><a href="#">同意退货</a></li>
+        <li><a href="#">删除</a></li>
+    </ul></div></td></tr>
+    {%else%}
+    <tr><td><img src="{{pid.cp_id.p_pic[0]}}"></td><td>{{pid.cp_id.p_title}}</td><td>{{pid.cp_id.price}}</td><td>{{pid.num}}</td></tr>
+    {%endif%}
+    {%endfor%}
+    {%endfor%}
+</table>
+<!--分页-->
+<ul class="pager">
+    {%if page==1&&page==pages%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==1%}
+    <li class="previous disabled"><a href="javascript:;"><span>&larr;</span> 上一页</a></li>
+    <li class="next"><a href="/admin/order?status={{status}}&page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%elseif page==pages%}
+    <li class="previous"><a href="/admin/order?status={{status}}&page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li class="next disabled"><a href="javascript:;">下一页 <span>&rarr;</span></a></li>
+    {%else%}
+    <li class="previous"><a href="/admin/order?status={{status}}&page={{page-1}}"><span>&larr;</span> 上一页</a></li>
+    <li class="next"><a href="/admin/order?status={{status}}&page={{page+1}}">下一页 <span>&rarr;</span></a></li>
+    {%endif%}
+</ul>
+<script>
+    $('.dropdown-menu a').on('click',function () {
+        $('.search-key').text($(this).text());
+    })
+    //批量删除
+    $('#del_all').on('click',function (e) {
+        e.preventDefault();
+        var p_ids=[];
+        $('input[name="p_id"]:checked').each(function () {
+            p_ids.push($(this).val());
+        });
+        if(p_ids==[]){
+            return;
+        }
+        $.post('/api/del_pro',{p_ids:p_ids},function (data) {
+            if(data){
+                location.reload();
+            }else{
+                alert('更新失败');
+            }
+        })
+    })
+    //批量下架
+    $('.up_status').on('click',function () {
+        var status = $(this).attr('data-status');
+        var p_ids=[];
+        $('input[name="p_id"]:checked').each(function () {
+            p_ids.push($(this).val());
+        });
+        if(p_ids==[]){
+            return;
+        }
+        $.post('/api/up_status',{p_ids:p_ids,status:status},function (data) {
+            if(data){
+                location.reload();
+            }else{
+                alert('更新失败');
+            }
+
+        })
+    })
+</script>
+{% endblock %}

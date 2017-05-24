@@ -78,6 +78,10 @@
     .uploadmess{
         padding-left: 20px;color: #f83232;
     }
+    .p_pic{
+        width:100px;
+        height:100px;
+    }
 </style>
 <div class="header">
     <h3>商品管理</h3>
@@ -135,7 +139,7 @@
             processData: false,
             success: function (data) {
               $(_thisa).hide();
-              var Img=$('<img class="p_pic" style="width:100px;height: 100px;" />');
+              var Img=$('<img class="p_pic"/>');
               $(Img).attr('src',data);
               $(_thisa).closest('.imgbox').append(Img);
             }
@@ -143,6 +147,10 @@
           $('#upfile').off('change');
         }
       })
+    })
+    $('.imgbox').on('click','img',function () {
+        $(this).prevAll('.uploadp').show();
+        $(this).remove();
     })
     //类目管理
     $('#add-cate').on('click',function () {

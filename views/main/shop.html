@@ -50,9 +50,9 @@
         {%for product in products%}
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
-                <a href="/pdetail?p_id={{product._id.toString()}}"><img src="{{product.p_pic[0]}}"/></a>
+                <a href="/pdetail?p_id={{product._id.toString()}}"><img src="{{product.p_pic[0]}}" class="" /></a>
                 <div class="caption">
-                    <h4>{{product.p_title.substr(0,20)+'...'}}</h4>
+                    <h4>{{product.p_title.substr(0,22)+'...'}}</h4>
                     <p><span class="price">￥{{product.price}}</span> <a href="/pdetail?p_id={{product._id.toString()}}" class="btn addcart">查看详情</a></p>
                 </div>
             </div>

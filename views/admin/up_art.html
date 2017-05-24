@@ -1,0 +1,191 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<link rel="stylesheet" href="/public/wangeditor/css/wangEditor.min.css">
+<style>
+    .panel{
+        margin-bottom: 0;
+    }
+    .panel .panel{
+        margin-bottom: 20px;
+    }
+    .title{
+        margin-bottom: 20px;
+    }
+    #weditor{
+        height:400px;
+    }
+    .check-group{
+        display: inline-block;
+    }
+    .panel input[type='checkbox']{
+        display:none;
+    }
+    .pidwrap{
+        display:inline-block;
+        margin:10px 10px 0 0;
+    }
+    .addtag{
+        width: 240px;
+    }
+    .idmess{
+        padding:5px 0;
+        color: #f83232;
+    }
+    .checkbox{
+        overflow: hidden;
+        padding:0 5px;
+    }
+    .checkbox .addmess{
+        display: inline-block;
+        color: #f83232;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">更新文章</h3>
+    </div>
+    <div class="panel-body">
+        <div class="input-group title">
+            <label for="title" class="input-group-addon">文章标题</label>
+            <input type="text" id="title" class="form-control" placeholder="添加标题" name="title" value="{{article.a_title}}">
+        </div>
+        <div class="input-group title">
+            <label for="abs" class="input-group-addon">内容简介</label>
+            <input type="text" id="abs" class="form-control" placeholder="添加简介" name="abs" value="{{article.a_abs}}">
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">文章标签</div>
+            <div class="panel-body">
+                {%for tag in tags%}
+                <div class="check-group">
+                    <label for="tag1" class="btn btn-default">{{tag.name}}</label>
+                    <input type="checkbox" name="tag" id="tag1" value="{{tag._id.toString()}}">
+                </div>
+                {%endfor%}
+                <div class="input-group pull-right addtag">
+                    <input type="text" name="add_tag" class="form-control add_tag" placeholder="添加标签...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" id="add-tag" type="button">添加标签</button>
+                    </span>
+                </div><span class="pull-right tagmess" style="color:#f83232;vertical-align: middle;padding: 0 5px;line-height: 34px;"></span>
+            </div>
+            <!--关联产品-->
+            <div class="panel panel-default">
+                <div class="panel-heading">关联产品</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <input class="form-control pid" placeholder="请输入要关联的产品ID,多个以,分隔">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-default pidadd">添加</button>
+                        </div>
+                    </div>
+                    <div class="pidgroup">
+                        <p class="idmess"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="weditor">内容</label>
+                <textarea id="weditor" class="form-control">
+                 {%autoescape false%}{{article.content}}{%endautoescape%}
+            </textarea>
+            </div>
+            <div class="checkbox">
+                <p class="addmess"></p>
+                <button type="submit" class="btn btn-default pull-right" id="publish">发布文章</button>
+            </div>
+        </div>
+    </div>
+
+    <!--这里引用jquery和wangEditor.js-->
+    <script type="text/javascript" src="/public/wangeditor/js/wangEditor.js"></script>
+    <script type="text/javascript">
+        var editor = new wangEditor('weditor');
+        editor.config.uploadImgUrl = '/api/uploadimg?type=article';
+        editor.config.uploadHeaders = {
+            'Accept' : 'text/x-json'
+        };
+        //editor.config.hideLinkImg = true;
+        editor.create();
+        //按钮效果
+        $('.check-group .btn').click(function () {
+            $(this).toggleClass('btn-default btn-primary');
+            $(this).next().attr('checked',function (i,val) {
+                return !val;
+            });
+        })
+        //添加tag
+        $('#add-tag').on('click',function () {
+            var tag = $('.add_tag').val();
+            if(tag==''){
+                $('.tagmess').text('输入内容为空');
+            }else{
+                console.log(tag);
+                $.post('/api/add_tag',{tag:tag},function (data) {
+                    $('.tagmess').text(data.mess);
+                    console.log(data.detail);
+                    if(!data.code){
+                        //todo
+                    }
+                })
+            }
+            $('.add_tag').val('');
+        })
+        //添加产品id
+        $('.pidadd').click(function () {
+            var pid = $('.pid').val().trim().split('，');
+            if(pid[0]!=''){
+                $.post('/api/check_pid',{p_id:pid},function (data){
+                    if(!data.detail){
+                        $('.idmess').text(data.mess);
+                    }else{
+                        $('.idmess').text('');
+                        for(var p=0;p<data.detail.length;p++){
+                            var $label =$('<div  class="pidwrap alert alert-info alert-dismissible"><strong>'+data.detail[p].p_title.substr(0,5)+'...</strong><input type="checkbox" checked="checked" name="pid" value="'+data.detail[p]._id+'"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button></div>');
+                            $('.pidgroup').append($label);
+                        }
+                    }
+                });
+            }else{
+                $('.idmess').text('请输入产品ID');
+            }
+            $('.pid').val('');
+        })
+        //上传文章
+        $('#publish').on('click',function () {
+            var a_title =$('input[name="title"]').val();
+            var a_abs =$('input[name="abs"]').val();
+            var a_tag =[];
+            $('input[name="tag"]:checked').each(function (){
+                a_tag.push($(this).val());
+            });
+            var p_id = [];
+            $('input[name="pid"]').each(function () {
+                p_id.push($(this).val())
+            })
+            var content = editor.$txt.html();
+            var a_pic=$('.wangEditor-txt img').attr('src')||'/public/upload/article/8615775524920852.jpeg';
+            if(a_title==''||a_abs==''){
+                $('.addmess').text('标题和简介不能为空');
+                return;
+            }else if(a_tag[0]==''){
+                $('.addmess').text('标签不能为空');
+                return;
+            }else if(content==''){
+                $('.addmess').text('内容不能为空');
+                return;
+            }
+            $.post('/api/add_article',{a_title:a_title,a_tag:a_tag,p_id:p_id,content:content,a_pic:a_pic,a_abs:a_abs},function (data) {
+                $('.addmess').text(data.mess);
+                if(!data.code){
+                    setTimeout(function () {
+                        location.reload();
+                    },1000)
+                }
+            })
+        })
+    </script>
+    {% endblock %}

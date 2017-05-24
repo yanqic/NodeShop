@@ -83,20 +83,20 @@
                     <li><a href="#">产品编号</a></li>
                 </ul>
             </div><!-- /btn-group -->
-            <input type="text" class="form-control">
+            <input type="text" class="form-control query">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="btn btn-default search-btn" type="button">Search</button>
               </span>
         </div>
     </div>
 </div>
 <!--table-->
 <table class="table">
-    <tr><th colspan="3">商品名称</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th></tr>
+    <tr><th colspan="3">商品名称</th><th>商品编号</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th></tr>
     {%for product in products%}
-    <tr><td><input type="checkbox" name="p_id" value="{{product.p_id}}"></td><td><img width="80" height="80" src="{{product.p_pic[0]}}" alt=""></td><td class="textl">{{product.p_title}}</td><td>{{product.price}}</td><td>{{product.p_num}}</td>{%if product.status == 1 %}<td><span>已上架</span></td><td>
-        <a href="/api/up_status?p_id={{product.p_id}}&status=0" class="btn btn-sm btn-primary">下架</a><a href="" class="btn btn-sm btn-primary">修改</a><a href="/api/del_pro?p_id={{product.p_id}}" class="btn btn-sm btn-primary">删除</a></td>{%else%}<td><span>库存中</span></td><td>
-        <a href="/api/up_status?p_id={{product.p_id}}&status=1" class="btn btn-sm btn-primary">上架</a><a href="" class="btn btn-sm btn-primary">修改</a><a href="/api/del_pro?p_id={{product.p_id}}" class="btn btn-sm btn-primary">删除</a></td>{%endif%}</tr>
+    <tr><td><input type="checkbox" name="p_id" value="{{product.p_id}}"></td><td><img width="80" height="80" src="{{product.p_pic[0]}}" alt=""></td><td class="textl">{{product.p_title}}</td><td>{{product.p_id}}</td><td>{{product.price}}</td><td>{{product.p_num}}</td>{%if product.status == 1 %}<td><span>已上架</span></td><td>
+        <a href="/api/up_status?p_id={{product.p_id}}&status=0" class="btn btn-sm btn-primary">下架</a><a href="/admin/up_pro?_id={{product._id.toString()}}" class="btn btn-sm btn-primary">修改</a><a href="/api/del_pro?p_id={{product.p_id}}" class="btn btn-sm btn-primary">删除</a></td>{%else%}<td><span>库存中</span></td><td>
+        <a href="/api/up_status?p_id={{product.p_id}}&status=1" class="btn btn-sm btn-primary">上架</a><a href="/admin/up_pro?_id={{product._id.toString()}}" class="btn btn-sm btn-primary">修改</a><a href="/api/del_pro?p_id={{product.p_id}}" class="btn btn-sm btn-primary">删除</a></td>{%endif%}</tr>
     {%endfor%}
 </table>
 <!--分页-->
@@ -155,6 +155,22 @@
           }
 
         })
+    })
+    $('.search-btn').on('click',function () {
+        var query = $('.query').val();
+        if(query==''){
+          alert('查询条件不能为空');
+          return;
+        }else{
+          var key =$('.search-key').text();
+          if(key=='产品名'){
+            key='p_title';
+          }else{
+            key='p_id';
+          }
+          console.log(location.hostname+':'+location.port+'/admin/product?'+key+'='+query);
+          location.href='/admin/product?'+key+'='+query;
+        }
     })
 </script>
 {% endblock %}

@@ -4,7 +4,6 @@
 var mongoose = require('mongoose');
 
 module.exports = new mongoose.Schema({
-
   cp_id:	{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'

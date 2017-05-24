@@ -62,7 +62,7 @@
     <li class="active"><a href="/admin/article">所有文章</a></li>
 </ul>
 <div class="handle">
-    <a href="/admin/edit" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign"></i>添加文章</a>
+    <a href="/admin/add_art" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign"></i>添加文章</a>
     <a href="" class="btn btn-warning" id="del_all"><i class="glyphicon glyphicon-minus-sign"></i>批量删除</a>
     <div class="col-md-5 pull-right">
         <div class="input-group">
@@ -73,9 +73,9 @@
                     <li><a href="#">作者</a></li>
                 </ul>
             </div><!-- /btn-group -->
-            <input type="text" class="form-control">
+            <input type="text" class="form-control query">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="btn btn-default search-btn" type="button">Search</button>
               </span>
         </div>
     </div>
@@ -85,7 +85,7 @@
     <tr><th colspan="2">文章名称</th><th>分类</th><th>作者</th><th>发布日期</th><th>操作</th></tr>
     {%for article in articles%}
     <tr><td><input type="checkbox" name="p_id" value="{{article._id.toString()}}"></td><td class="textl">{{article.a_title}}</td><td>{%for tag in article.a_tag%}<span class="tag">{{tag.name}}</span>{%endfor%}</td><td>{{article.author.uname}}</td><td>{{article.addTime|date('Y年m月d日 H:i:s', -8*60)}}</td><td>
-       <a href="" class="btn btn-sm btn-primary">修改</a><a href="/api/del_art" class="btn btn-sm btn-primary">删除</a></td></tr>
+       <a href="/admin/up_art?_id={{article._id.toString()}}" class="btn btn-sm btn-primary">修改</a><a href="/api/del_art?_id={{article._id.toString()}}" class="btn btn-sm btn-primary">删除</a></td></tr>
     {%endfor%}
 </table>
 <!--分页-->
@@ -105,6 +105,7 @@
     {%endif%}
 </ul>
 <script>
+    //修改内容
     $('.dropdown-menu a').on('click',function () {
         $('.search-key').text($(this).text());
     })
@@ -118,32 +119,31 @@
         if(p_ids==[]){
             return;
         }
-        $.post('/api/del_pro',{p_ids:p_ids},function (data) {
+        console.log(p_ids);
+        $.post('/api/del_art',{_ids:p_ids},function (data) {
             if(data){
                 location.reload();
             }else{
-                alert('更新失败');
+                alert('删除失败');
             }
         })
     })
-    //批量下架
-    $('.up_status').on('click',function () {
-        var status = $(this).attr('data-status');
-        var p_ids=[];
-        $('input[name="p_id"]:checked').each(function () {
-            p_ids.push($(this).val());
-        });
-        if(p_ids==[]){
+    //查询
+    $('.search-btn').on('click',function () {
+        var query = $('.query').val();
+        if(query==''){
+            alert('查询条件不能为空');
             return;
-        }
-        $.post('/api/up_status',{p_ids:p_ids,status:status},function (data) {
-            if(data){
-                location.reload();
+        }else{
+            var key =$('.search-key').text();
+            if(key=='文章名'){
+                key='a_title';
             }else{
-                alert('更新失败');
+                key='author';
             }
-
-        })
+            location.href='/admin/article?'+key+'='+query;
+        }
     })
+
 </script>
 {% endblock %}

@@ -2,6 +2,7 @@ var express = require("express");
 var swig = require("swig");
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 var session = require('express-session');
 
 var app = express();

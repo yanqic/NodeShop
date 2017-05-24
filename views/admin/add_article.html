@@ -99,7 +99,6 @@
         </div>
     </div>
 </div>
-
 <!--这里引用jquery和wangEditor.js-->
 <script type="text/javascript" src="/public/wangeditor/js/wangEditor.js"></script>
 <script type="text/javascript">
@@ -144,7 +143,7 @@
                 }else{
                     $('.idmess').text('');
                   for(var p=0;p<data.detail.length;p++){
-                    var $label =$('<div  class="pidwrap alert alert-info alert-dismissible"><strong>'+data.detail[p].p_title.substr(0,5)+'...</strong><input type="checkbox" checked="checked" name="pid" value="'+data.detail[p].p_id+'"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button></div>');
+                    var $label =$('<div  class="pidwrap alert alert-info alert-dismissible"><strong>'+data.detail[p].p_title.substr(0,5)+'...</strong><input type="checkbox" checked="checked" name="pid" value="'+data.detail[p]._id+'"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button></div>');
         $('.pidgroup').append($label);
                     }
                 }
